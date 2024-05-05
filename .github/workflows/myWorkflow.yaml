@@ -1,0 +1,40 @@
+name: Workflow for scanning code vulnerabilities
+on:
+  push:
+    #branches:
+    #- release/v[0-9]+.[0-9]+
+    
+
+jobs:
+  Scanning-Security-Vulnerabilities:
+    if: "!startsWith(github.event.head_commit.message, '#NORUN')"
+    runs-on: ubuntu-latest
+    steps:             
+      - name: Checkout source code
+        uses: actions/checkout@v4.1.4
+        with:
+          ref: ${{ github.base_ref }}
+
+      - name: Run Aqua Security Trivy for HIGH severity
+        uses: aquasecurity/trivy-action@master
+        with:          
+          scan-type: 'fs'
+          format: 'table'
+          severity: 'HIGH'
+          exit-code: '1'
+          output: 'trivy-scan.txt'
+      
+      - name: No vulnerabilities found
+        if: ${{ steps.trivy.outputs.exit_code == 0}}
+        run: echo "No vulnerabilities found"
+
+      - name: Vulnerabilities found
+        if: ${{ steps.trivy.outputs.exit_code == 1}}
+        run: echo "Vulnerabilities found"
+
+
+
+
+
+            
+            
