@@ -80,10 +80,11 @@ jobs:
 
       - name: Sign the image with Cosign
         run: |
-          cosign sign --key env://COSIGN_PRIVATE_KEY joot24/go-fortune:${{ github.sha }}
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY joot24/go-fortune@${DIGEST}
         env:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSPHRASE }}
+          DIGEST: ${{ steps.build-push.outputs.digest }}
 
       - name: Slack Notification on success
         uses: rtCamp/action-slack-notify@v2
