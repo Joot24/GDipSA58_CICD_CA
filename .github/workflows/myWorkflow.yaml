@@ -85,4 +85,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ github.repository_owner }}/go-fortune:${{ github.sha }}     
+          tags: joot24/go-fortune:${{ github.sha }}     
