@@ -38,19 +38,15 @@ jobs:
         env:
           SLACK_COLOR: failure
           SLACK_TITLE: '*Scan failed - Jefri*'
-          SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'          
-          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
-          #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
+          SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'                    
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}          
 
       - name: Slack upload of vulnerability report
         if: steps.check_output.outputs.VULNERABILITIES_FOUND == '1'
         uses: MeilCli/slack-upload-file@v4      
         with:
-          slack_token: ${{ secrets.RICH_TOKEN }}
-          #slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
-          channel_id: ${{ secrets.RICH_CHANNELID }}
-          #channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-scan.txt'
           initial_comment: 'Scan report by Too Chang Geng Jefri'
 
@@ -100,8 +96,7 @@ jobs:
             *Email:* e1332826@u.nus.edu
             *Git:* https://github.com/${{ github.repository }}    
             *Image:* ${{ vars.DOCKER_URL }}
-          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
 
 
   Scanning-Security-Vulnerabilities-CRITICAL:
@@ -138,18 +133,14 @@ jobs:
           SLACK_COLOR: failure
           SLACK_TITLE: '*Scan failed - Jefri*'
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'          
-          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
-          #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
 
       - name: Slack upload of vulnerability report
         if: steps.check_output.outputs.VULNERABILITIES_FOUND == '1'
         uses: MeilCli/slack-upload-file@v4      
         with:
-          slack_token: ${{ secrets.RICH_TOKEN }}
-          #slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
-          channel_id: ${{ secrets.RICH_CHANNELID }}
-          #channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-scan.txt'
           initial_comment: 'Scan report by Too Chang Geng Jefri'
 
@@ -199,5 +190,4 @@ jobs:
             *Email:* e1332826@u.nus.edu
             *Git:* https://github.com/${{ github.repository }}    
             *Image:* ${{ vars.DOCKER_URL }}
-          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
