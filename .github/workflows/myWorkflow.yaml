@@ -24,15 +24,15 @@ jobs:
           output: 'trivy-scan.txt'
 
       - name: Scan results outcome
+        id: check_output
         run: |
           if [ -f trivy-scan.txt ]; then
-            scan_result=1            
+            echo "::set-output name=scan_result::1"
           else
-            scan_result=2            
-        id: check_output
+            echo "::set-output name=scan_result::0"
 
       - name: Slack Notification on failure
-        if: scan_result == 1
+        if: steps.check_output.outputs.scan_result == 1
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: failure
@@ -43,7 +43,7 @@ jobs:
           #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
 
       - name: Slack upload of vulnerability report
-        if: scan_result == 1
+        if: steps.check_output.outputs.scan_result == 1
         uses: MeilCli/slack-upload-file@v4      
         with:
           slack_token: ${{ secrets.RICH_TOKEN }}
@@ -54,7 +54,7 @@ jobs:
           initial_comment: 'Scan report by Too Chang Geng Jefri'
 
       - name: Terminate workflow on failure
-        if: scan_result == 1
+        if: steps.check_output.outputs.scan_result == 1
         run: exit 1
 
       # - name: Install Cosign
