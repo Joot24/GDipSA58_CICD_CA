@@ -76,12 +76,12 @@ jobs:
           push: true
           tags: joot24/go-fortune:${{ github.sha }}     
 
-      - name: Get Docker Hub image URL
-        id: get-image-url
-        run: |
-            IMAGE_NAME=$(echo ${{ steps.build-push.outputs.digest }} | cut -d':' -f1)
-            IMAGE_URL="docker.io/${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME"
-            echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
+      # - name: Get Docker Hub image URL
+      #   id: get-image-url
+      #   run: |
+      #       IMAGE_NAME=$(echo ${{ steps.build-push.outputs.digest }} | cut -d':' -f1)
+      #       IMAGE_URL="https://hub.docker.com/r/${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME"
+      #       echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
 
       - name: Slack Notification on success
         uses: rtCamp/action-slack-notify@v2
@@ -93,6 +93,6 @@ jobs:
             *Matriculation:* A0035383H
             *Email:* e1332826@u.nus.edu
             *Git:* https://github.com/${{ github.repository }}    
-            *Image:* ${{ env.IMAGE_URL }}
+            *Image:* ${{ env.DOCKER_URL }}
           SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
           #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
