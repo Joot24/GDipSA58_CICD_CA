@@ -41,10 +41,10 @@ jobs:
             *Name:* Too Chang Geng Jefri
             *Matriculation:* A0035383H
             *Email:* e1332826@u.nus.edu
-            *Git:* ${{ github.repositoryUrl }}     
+            *Git:* https://github.com/${{ github.repository }}    
             *Image:* TBC
-          #SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
+          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
 
       - name: Slack Notification on failure
         uses: rtCamp/action-slack-notify@v2
@@ -54,18 +54,19 @@ jobs:
           SLACK_TITLE: '*Scan failed - Jefri*'
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
           #SLACK_FILE_UPLOAD: trivy-scan.txt
-          #SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
+          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
           #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
 
-      - uses: MeilCli/slack-upload-file@v4      
+      - name: Slack upload of vulnerability report
+        uses: MeilCli/slack-upload-file@v4      
         with:
           #slack_token: ${{ secrets.RICH_TOKEN }}
           slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
           #channel_id: ${{ secrets.RICH_CHANNELID }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
           file_path: 'trivy-scan.txt'
-          initial_comment: 'Scan report by Jefri'
+          initial_comment: 'Scan report by Too Chang Geng Jefri'
 
       
             
