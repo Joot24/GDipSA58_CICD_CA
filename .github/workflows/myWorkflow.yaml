@@ -93,6 +93,6 @@ jobs:
             *Matriculation:* A0035383H
             *Email:* e1332826@u.nus.edu
             *Git:* https://github.com/${{ github.repository }}    
-            *Image:* ${{ env.DOCKER_URL }}
+            *Image:* ${{ vars.DOCKER_URL }}
           SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
           #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
