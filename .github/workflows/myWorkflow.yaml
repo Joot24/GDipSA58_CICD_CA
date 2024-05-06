@@ -32,20 +32,28 @@ jobs:
                 exit 1
             fi
 
-      - name: Slack Notification
+      - name: Slack Notification on success
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: success
-          SLACK_MESSAGE: |
-            *Image build and signed*
+          SLACK_TITLE: '*Image build and signed*'
+          SLACK_MESSAGE: |            
             *Name:* Jefri
             *Matriculation:* abc123
             *Email:* e1332826@u.nus.edu
-            *Git:* https://github.com/Joot24/GDipSA58_CICD_CA
-          #SLACK_FILE_UPLOAD: trivy-scan.txt
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+            *Git:* https://github.com/Joot24/GDipSA58_CICD_CA     
+            *Image:* TBC
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
 
-
+      - name: Slack Notification on failure
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: failure
+          SLACK_TITLE: '*Scan failed - Jefri*'
+          SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
+          SLACK_FILE_UPLOAD: trivy-scan.txt
+          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          SLACK_TOKEN: ${{ secrets.SLACK_FILE_UPLOAD }}
 
 
 
