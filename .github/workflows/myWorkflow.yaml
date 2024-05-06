@@ -41,35 +41,27 @@ jobs:
             *Name:* Too Chang Geng Jefri
             *Matriculation:* A0035383H
             *Email:* e1332826@u.nus.edu
-            *Git:* https://github.com/Joot24/GDipSA58_CICD_CA     
+            *Git:* ${{ github.repositoryUrl }}     
             *Image:* TBC
-          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Slack Notification on failure
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: test-submission
+          SLACK_CHANNEL: 
           SLACK_COLOR: failure
           SLACK_TITLE: '*Scan failed - Jefri*'
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
-          SLACK_FILE_UPLOAD: trivy-scan.txt
-          SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
-          SLACK_TOKEN: ${{ secrets.SLACK_FILE_UPLOAD }}
+          #SLACK_FILE_UPLOAD: trivy-scan.txt
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
 
+      - uses: MeilCli/slack-upload-file@v4      
+        with:
+          slack_token: ${{ secrets.RICH_TOKEN }}
+          channel_id: ${{ secrets.RICH_CHANNELID }}
+          file_path: 'trivy-scan.txt'
+          initial_comment: 'Scan report by Jefri'
 
-
-
-        #- name: Upload report
-        #if: ${{ steps.trivy.outputs.exit_code == 1 }} 
-       # uses: actions/upload-artifact@v2
-        #with:
-         # name: trivy-scan
-          #path: trivy-scan.txt
-          #destination: input
-
-
-
-
-
-            
+      
             
