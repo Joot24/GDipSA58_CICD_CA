@@ -26,16 +26,13 @@ jobs:
       - name: Scan results outcome
         run: |
           if [ -f trivy-scan.txt ]; then
-            echo "Vulnerabilities found"
-            exit 0
+            scan_result=1            
           else
-            echo "No vulnerabilities found"
-            exit 1
-          fi
+            scan_result=2            
         id: check_output
 
       - name: Slack Notification on failure
-        if: steps.check_output.outcome == 0
+        if: scan_result == 1
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: failure
@@ -46,7 +43,7 @@ jobs:
           #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
 
       - name: Slack upload of vulnerability report
-        if: steps.check_output.outcome == 0
+        if: scan_result == 1
         uses: MeilCli/slack-upload-file@v4      
         with:
           slack_token: ${{ secrets.RICH_TOKEN }}
@@ -56,53 +53,57 @@ jobs:
           file_path: 'trivy-scan.txt'
           initial_comment: 'Scan report by Too Chang Geng Jefri'
 
-      - name: Install Cosign
-        if: steps.check_output.outcome == 1
-        uses: sigstore/cosign-installer@v3.5.0
+      - name: Terminate workflow on failure
+        if: scan_result == 1
+        run: exit 1
 
-      - name: Set up QEMU
-        if: steps.check_output.outcome == 1
-        uses: docker/setup-qemu-action@v3
-      
-      - name: Set up Docker Buildx
-        if: steps.check_output.outcome == 1
-        uses: docker/setup-buildx-action@v3
-      
-      - name: Login to Docker Hub
-        if: steps.check_output.outcome == 1
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      - name: Build and push
-        if: steps.check_output.outcome == 1
-        id: build-push
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: joot24/go-fortune:${{ github.sha }}     
+      # - name: Install Cosign
+      #   if: steps.check_output.outcome == 1
+      #   uses: sigstore/cosign-installer@v3.5.0
 
-      - name: Sign the image with Cosign
-        if: steps.check_output.outcome == 1
-        run: |
-          cosign sign --yes --key env://COSIGN_PRIVATE_KEY joot24/go-fortune@${DIGEST}
-        env:
-          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSPHRASE }}
-          DIGEST: ${{ steps.build-push.outputs.digest }}
+      # - name: Set up QEMU
+      #   if: steps.check_output.outcome == 1
+      #   uses: docker/setup-qemu-action@v3
+      
+      # - name: Set up Docker Buildx
+      #   if: steps.check_output.outcome == 1
+      #   uses: docker/setup-buildx-action@v3
+      
+      # - name: Login to Docker Hub
+      #   if: steps.check_output.outcome == 1
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      # - name: Build and push
+      #   if: steps.check_output.outcome == 1
+      #   id: build-push
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     push: true
+      #     tags: joot24/go-fortune:${{ github.sha }}     
 
-      - name: Slack Notification on success
-        if: steps.check_output.outcome == 1
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_COLOR: success
-          SLACK_TITLE: '*Image build and signed*'
-          SLACK_MESSAGE: |            
-            *Name:* Too Chang Geng Jefri
-            *Matriculation:* A0035383H
-            *Email:* e1332826@u.nus.edu
-            *Git:* https://github.com/${{ github.repository }}    
-            *Image:* ${{ vars.DOCKER_URL }}
-          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+      # - name: Sign the image with Cosign
+      #   if: steps.check_output.outcome == 1
+      #   run: |
+      #     cosign sign --yes --key env://COSIGN_PRIVATE_KEY joot24/go-fortune@${DIGEST}
+      #   env:
+      #     COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      #     COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSPHRASE }}
+      #     DIGEST: ${{ steps.build-push.outputs.digest }}
+
+      # - name: Slack Notification on success
+      #   if: steps.check_output.outcome == 1
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_COLOR: success
+      #     SLACK_TITLE: '*Image build and signed*'
+      #     SLACK_MESSAGE: |            
+      #       *Name:* Too Chang Geng Jefri
+      #       *Matriculation:* A0035383H
+      #       *Email:* e1332826@u.nus.edu
+      #       *Git:* https://github.com/${{ github.repository }}    
+      #       *Image:* ${{ vars.DOCKER_URL }}
+      #     SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
+      #     #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
