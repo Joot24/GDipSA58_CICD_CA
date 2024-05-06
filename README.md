@@ -11,7 +11,7 @@ The release version corresponds to the container image version
 
 ## Public key
 
-The public key to verify the image is in the repository `cosign.pub`. To verify the image use [cosign](https://github.com/sigstore/cosign)
+The public key to verify the image is in the repository `go-fortune.pub`. To verify the image use [cosign](https://github.com/sigstore/cosign)
 
 ```
 cosign verify --key cosign.pub ghcr.io/chukmunnlee/go-fortune:<tag>

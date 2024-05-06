@@ -56,7 +56,9 @@ jobs:
       #     file_path: 'trivy-scan.txt'
       #     initial_comment: 'Scan report by Too Chang Geng Jefri'
 
-      
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       
@@ -76,12 +78,9 @@ jobs:
           push: true
           tags: joot24/go-fortune:${{ github.sha }}     
 
-      # - name: Get Docker Hub image URL
-      #   id: get-image-url
-      #   run: |
-      #       IMAGE_NAME=$(echo ${{ steps.build-push.outputs.digest }} | cut -d':' -f1)
-      #       IMAGE_URL="https://hub.docker.com/r/${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME"
-      #       echo "IMAGE_URL=$IMAGE_URL" >> $GITHUB_ENV
+      - name: Sign the image with Cosign
+        run: |
+          cosign sign -key ${{ secrets.COSIGN_PRIVATE_KEY }} joot24/go-fortune:${{ github.sha }}
 
       - name: Slack Notification on success
         uses: rtCamp/action-slack-notify@v2
