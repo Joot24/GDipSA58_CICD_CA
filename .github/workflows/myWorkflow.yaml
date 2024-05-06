@@ -48,7 +48,7 @@ jobs:
       - name: Slack Notification on failure
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: 
+          #SLACK_CHANNEL: 
           SLACK_COLOR: failure
           SLACK_TITLE: '*Scan failed - Jefri*'
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
