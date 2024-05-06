@@ -23,55 +23,60 @@ jobs:
           severity: 'HIGH'
           output: 'trivy-scan.txt'
 
-      - name: Echo contents of trivy-scan.txt
+      - name: Scan results outcome
         run: |
-            if test -f trivy-scan.txt; then
-                cat trivy-scan.txt
-            else
-                echo "trivy-scan.txt does not exist."
-                exit 1
-            fi
+          if [ -f trivy-scan.txt ]; then
+            echo "Vulnerabilities found"
+            exit 0
+          else
+            echo "No vulnerabilities found"
+            exit 1
+          fi
+        id: check_output
 
+      - name: Slack Notification on failure
+        if: steps.check_output.outcome == 0
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: failure
+          SLACK_TITLE: '*Scan failed - Jefri*'
+          SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'          
+          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
+          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+          #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
 
-
-      # - name: Slack Notification on failure
-      #   uses: rtCamp/action-slack-notify@v2
-      #   env:
-      #     #SLACK_CHANNEL: 
-      #     SLACK_COLOR: failure
-      #     SLACK_TITLE: '*Scan failed - Jefri*'
-      #     SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
-      #     #SLACK_FILE_UPLOAD: trivy-scan.txt
-      #     SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-      #     #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
-      #     #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
-
-      # - name: Slack upload of vulnerability report
-      #   uses: MeilCli/slack-upload-file@v4      
-      #   with:
-      #     slack_token: ${{ secrets.RICH_TOKEN }}
-      #     #slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
-      #     channel_id: ${{ secrets.RICH_CHANNELID }}
-      #     #channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-      #     file_path: 'trivy-scan.txt'
-      #     initial_comment: 'Scan report by Too Chang Geng Jefri'
+      - name: Slack upload of vulnerability report
+        if: steps.check_output.outcome == 0
+        uses: MeilCli/slack-upload-file@v4      
+        with:
+          slack_token: ${{ secrets.RICH_TOKEN }}
+          #slack_token: ${{ secrets.SLACK_FILE_UPLOAD }}
+          channel_id: ${{ secrets.RICH_CHANNELID }}
+          #channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: 'trivy-scan.txt'
+          initial_comment: 'Scan report by Too Chang Geng Jefri'
 
       - name: Install Cosign
+        if: steps.check_output.outcome == 1
         uses: sigstore/cosign-installer@v3.5.0
 
       - name: Set up QEMU
+        if: steps.check_output.outcome == 1
         uses: docker/setup-qemu-action@v3
       
       - name: Set up Docker Buildx
+        if: steps.check_output.outcome == 1
         uses: docker/setup-buildx-action@v3
       
       - name: Login to Docker Hub
+        if: steps.check_output.outcome == 1
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build and push
+        if: steps.check_output.outcome == 1
         id: build-push
         uses: docker/build-push-action@v5
         with:
@@ -79,6 +84,7 @@ jobs:
           tags: joot24/go-fortune:${{ github.sha }}     
 
       - name: Sign the image with Cosign
+        if: steps.check_output.outcome == 1
         run: |
           cosign sign --yes --key env://COSIGN_PRIVATE_KEY joot24/go-fortune@${DIGEST}
         env:
@@ -87,6 +93,7 @@ jobs:
           DIGEST: ${{ steps.build-push.outputs.digest }}
 
       - name: Slack Notification on success
+        if: steps.check_output.outcome == 1
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: success
