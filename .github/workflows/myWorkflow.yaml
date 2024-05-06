@@ -80,10 +80,8 @@ jobs:
 
       - name: Sign the image with Cosign
         run: |
-          echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
-          echo -n "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key.base64
-          base64 -d cosign.key.base64 > cosign.key
-          cosign sign -key cosign.key joot24/go-fortune:${{ github.sha }}
+          #echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+          cosign sign --key ${{ secrets.COSIGN_PRIVATE_KEY }} joot24/go-fortune:${{ github.sha }}
 
       - name: Slack Notification on success
         uses: rtCamp/action-slack-notify@v2
