@@ -38,8 +38,8 @@ jobs:
           SLACK_COLOR: success
           SLACK_TITLE: '*Image build and signed*'
           SLACK_MESSAGE: |            
-            *Name:* Jefri
-            *Matriculation:* abc123
+            *Name:* Too Chang Geng Jefri
+            *Matriculation:* A0035383H
             *Email:* e1332826@u.nus.edu
             *Git:* https://github.com/Joot24/GDipSA58_CICD_CA     
             *Image:* TBC
@@ -48,6 +48,7 @@ jobs:
       - name: Slack Notification on failure
         uses: rtCamp/action-slack-notify@v2
         env:
+          SLACK_CHANNEL: test-submission
           SLACK_COLOR: failure
           SLACK_TITLE: '*Scan failed - Jefri*'
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
