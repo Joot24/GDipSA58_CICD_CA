@@ -32,19 +32,7 @@ jobs:
                 exit 1
             fi
 
-      # - name: Slack Notification on success
-      #   uses: rtCamp/action-slack-notify@v2
-      #   env:
-      #     SLACK_COLOR: success
-      #     SLACK_TITLE: '*Image build and signed*'
-      #     SLACK_MESSAGE: |            
-      #       *Name:* Too Chang Geng Jefri
-      #       *Matriculation:* A0035383H
-      #       *Email:* e1332826@u.nus.edu
-      #       *Git:* https://github.com/${{ github.repository }}    
-      #       *Image:* TBC
-      #     SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
-      #     #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
+
 
       # - name: Slack Notification on failure
       #   uses: rtCamp/action-slack-notify@v2
@@ -86,3 +74,22 @@ jobs:
         with:
           push: true
           tags: joot24/go-fortune:${{ github.sha }}     
+
+      - name: Extract Image URL
+        run: |
+          PUSH_OUTPUT=$(docker push joot24/go-fortune:${{ github.sha }})
+          IMAGE_URL=${PUSH_OUTPUT##* }
+
+      - name: Slack Notification on success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: success
+          SLACK_TITLE: '*Image build and signed*'
+          SLACK_MESSAGE: |            
+            *Name:* Too Chang Geng Jefri
+            *Matriculation:* A0035383H
+            *Email:* e1332826@u.nus.edu
+            *Git:* https://github.com/${{ github.repository }}    
+            *Image:* $DOCKER_PUSH_URL
+          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
+          #SLACK_WEBHOOK: ${{ secrets.SLACK_TEST_SUBMISSION }}
