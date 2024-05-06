@@ -43,7 +43,7 @@ jobs:
             *Email:* e1332826@u.nus.edu
             *Git:* ${{ github.repositoryUrl }}     
             *Image:* TBC
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
 
       - name: Slack Notification on failure
         uses: rtCamp/action-slack-notify@v2
@@ -53,7 +53,7 @@ jobs:
           SLACK_TITLE: '*Scan failed - Jefri*'
           SLACK_MESSAGE: 'Failed trivy scan, see uploaded report'
           #SLACK_FILE_UPLOAD: trivy-scan.txt
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.RICH_WEBHOOK }}
           #SLACK_TOKEN: ${{ secrets.RICH_TOKEN }}
 
       - uses: MeilCli/slack-upload-file@v4      
